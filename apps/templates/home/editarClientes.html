@@ -1,0 +1,849 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} ChartsJS {% endblock %}
+
+<!-- Element injected in the BODY element -->
+{% block body_class %} sidebar-mini {% endblock body_class %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+
+<!-- Google Font: Source Sans Pro -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+<!-- Font Awesome -->
+<link rel="stylesheet" href="{{ ASSETS_ROOT }}/plugins/fontawesome-free/css/all.min.css">
+<!-- Theme style -->
+<link rel="stylesheet" href="{{ ASSETS_ROOT }}/css/adminlte.min.css">
+<script src="{{ ASSETS_ROOT }}/plugins/sweetalert2/sweetalert2.all.min.js"></script>
+
+{% endblock stylesheets %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>Formulario de Edicion Cliente</h1>
+        </div>
+      </div>
+    </div><!-- /.container-fluid -->
+  </section>
+
+  <!-- Main content -->
+  <section class="content">
+    <div class="container-fluid">
+      <div class="card card-primary card-outline">
+        <div class="mx-3 sm:py-10 lg:py-25">
+
+          <br>
+          {% if messages %}
+          {% for message in messages %}
+          <script>
+            const Toast = Swal.mixin({
+              toast: true,
+              position: 'top-end',
+              showConfirmButton: false,
+              timer: 5000,
+              timerProgressBar: true,
+              didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+              }
+            })
+
+            Toast.fire({
+              icon: 'success',
+              title: 'registrado con exito!'
+            })
+          </script>
+          {% endfor %}
+          {% endif %}
+          <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="tab">
+              <button class="nav-link active" id="empresa-tab" data-toggle="tab" data-target="#Persona" type="button"
+                role="tab" aria-controls="home" aria-selected="true">Persona</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="profile-tab" data-toggle="tab" data-target="#Empresa" type="button"
+                role="tab" aria-controls="profile" aria-selected="false">Empresa</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="Modulos-tab" data-toggle="tab" data-target="#Modulos" type="button"
+                role="tab" aria-controls="contact" aria-selected="false">Modulos</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="Servicio-tab" data-toggle="tab" data-target="#Servicio" type="button"
+                role="tab" aria-controls="profile" aria-selected="false">Servicio</button>
+            </li>
+          </ul>
+          <br>
+          <div class="tab-content" id="myTabContent">
+
+            <div class="tab-pane fade show active" id="Persona" role="tabpanel" aria-labelledby="empresa-tab">
+              <form method="post">{% csrf_token %}
+                <div class="form-row">
+                  <div class="form-group col-md-4">
+                    {{form.dni|as_crispy_field}}
+                  </div>
+                  <div class="form-group col-md-4">
+                    {{form.name|as_crispy_field}}
+                  </div>
+                  <div class="form-group col-md-4">
+                    {{form.last_name|as_crispy_field}}
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group col-md-3">
+                    {{form.birthday|as_crispy_field}}
+                  </div>
+                  <div class="form-group col-md-3">
+                    {{form.phone|as_crispy_field}}
+                  </div>
+                  <div class="form-group col-md-3">
+                    {{form.mobile|as_crispy_field}}
+                  </div>
+                  <div class="form-group col-md-3">
+                    {{form.email|as_crispy_field}}
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group col-md-3">
+                    {{form.address|as_crispy_field}}
+                  </div>
+                  <div class="form-group col-md-3">
+                    {{form.address_number|as_crispy_field}}
+                  </div>
+                  <div class="form-group col-md-3">
+                    {{form.city_id|as_crispy_field}}
+                  </div>
+                  <div class="form-group col-md-3">
+                    <label for="inputEmail4">Provincia</label>
+                    <input type="text" class="form-control" name="provincia" id="provincia" readonly>
+                  </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Guardar</button>
+              </form>
+              <br>
+            </div>
+
+            <div class="tab-pane fade" id="Empresa" role="tabpanel" aria-labelledby="Persona-tab">
+              <div>
+                <button id="agregarCliente" class="btn btn-info editar">Agregar</button>
+              </div>
+              <div class="">
+                <div class="table-responsive py-2">
+                  <table id="tabla-personas" class="table table-striped table-bordered" style="width:100%">
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>cuit_cuil</th>
+                        <th>business_name</th>
+                        <th>phone</th>
+                        <th>mobile</th>
+                        <th>email</th>
+                        <th>ciudad</th>
+                        <th>state</th>
+                        <th>Opciones</th>
+                      </tr>
+                    </thead>
+                    <tbody>{{clientes}}
+                      {%for clientes in cliente %}
+
+                      <tr>
+                        <td>{{clientes.id}}</td>
+                        <td>{{clientes.cuit_cuil}}</td>
+                        <td>{{clientes.business_name}}</td>
+                        <td>{{clientes.phone}}</td>
+                        <td>{{clientes.mobile}}</td>
+                        <td>{{clientes.email}}</td>
+                        <td>{{clientes.city_id.name}}</td>
+                        <td>{{clientes.state}}</td>
+                        <td> <a class="btn btn-info btn-sm" onclick="editarCliente('{{clientes.id}}')">
+                            <i class="fas fa-pencil-alt">
+                            </i>
+                            Edit
+                          </a>
+                
+                        </td>
+                      </tr>
+
+                      {% endfor %}
+                    </tbody>
+
+                  </table>
+                </div>
+
+              </div>
+              <br>
+              <div class="card-body">
+                <div class="modal fade " id="registrarCliente" tabindex="-1" role="dialog"
+                  aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+
+                </div>
+              </div>
+            </div>
+            <div class="tab-pane fade" id="Servicio" role="tabpanel" aria-labelledby="Servicio-tab">
+
+
+              <div class="row">
+                <div class="col-md-2">
+                  <button class="btn btn-primary" style="width:100%" id="agregarBaseModal">Crear Base de datos</button>
+                </div>
+                <div class="col-md-2">
+                  <button id="agregarUsuario" style="width:100%" class="btn btn-primary">Crear usuario</button>
+                </div>
+                <div class="col-md-2">
+                  <button id="agregarWebsite" style="width:100%" class="btn btn-primary">Crear Sitio Web</button>
+                </div>
+              </div>
+              <br>
+
+              <div class="card" style=" border: rgb(167, 165, 165) 2px solid;">
+                <div class="card-header" style=" border-bottom: rgb(167, 165, 165) 2px solid;">
+                  Lista de base de datos
+                </div>
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-md-12">
+                      <div class="table-responsive py-2">
+                        <table id="tabla-base" class="table table-striped table-bordered" style="width:100%">
+                          <thead>
+                            <tr>
+                              <th>Cliente</th>
+                              <th>Nombre BD</th>
+                              <th>Usuario BD</th>
+                              <th>Contraseña BD</th>
+                              <th>Current Size</th>
+                              <th>Total Size</th>
+                              <th>Editar</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {%for clientes in cliente %}
+                            {% if clientes.bd.name_bd %}
+                            <tr>
+                              <td>{{clientes.business_name}}</td>
+
+                              <td>{{clientes.bd.name_bd}}</td>
+                              <td>{{clientes.bd.user_bd}}</td>
+                              <td>{{clientes.bd.password_bd}}</td>
+                              <td>{{clientes.bd.currentSize}}</td>
+                              <td>{{clientes.bd.TotalSize}}</td>
+                              <td><a class="btn btn-info btn-sm">
+                                  <i class="fas fa-pencil-alt">
+                                  </i>
+                                  Edit
+                                </a></td>
+                            </tr>
+                            {% endif %}
+                            {% endfor %}
+                          </tbody>
+
+                        </table>
+                      </div>
+
+                    </div>
+                    <div class="card-body">
+                      <div class="modal fade " id="baseModal" tabindex="-1" role="dialog"
+                        aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <br>
+              <div class="card" style=" border: rgb(167, 165, 165) 2px solid;">
+                <div class="card-header" style=" border-bottom: rgb(167, 165, 165) 2px solid;">
+                  Listado de usuarios
+                </div>
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-md-12">
+                      <div class="table-responsive py-2">
+                        <table id="tabla-usuario" class="table table-striped table-bordered" style="width:100%">
+                          <thead>
+                            <tr>
+                              <th>#</th>
+                              <th>Empresa</th>
+                              <th>Usuarios</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {%for clientes in cliente %}
+                            {% if clientes.cliente_user_set.all %}
+                            <tr>
+                              <td>{{clientes.id}}</td>
+                              <td>{{clientes.business_name}}</td>
+                              <td>
+                                <table class="table table-striped table-bordered" style="width:100%">
+                                  {%for c in clientes.cliente_user_set.all %}
+                                  <tr class="table-light">
+                                    <td style="width:40%">{{c.user_id.username}}</td>
+                                    <td style="width:45%">
+                                      {% if c.user_id.is_active == 1 %}
+                                      <span class="badge badge-success">Activo</span>
+
+                                      {% else %}
+                                      <span class="badge badge-danger">Inactivo</span>
+                                      {% endif %}
+                                    </td>
+                                    <td style="width:50%"> <a class="btn btn-info btn-sm"
+                                        onclick="editarUsuario('{{c.user_id.id}}')">
+                                        <i class="fas fa-pencil-alt">
+                                        </i>
+                                        Edit
+                                      </a></td>
+                                  </tr>
+                                  {% endfor %}
+                                </table>
+                              </td>
+                            </tr>
+                            {% endif %}
+                            {% endfor %}
+
+
+                          </tbody>
+
+                        </table>
+                      </div>
+                      <div class="card-body">
+                        <div class="modal fade " id="agregarUsuarioModal" tabindex="-1" role="dialog"
+                          aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <br>
+
+              <div class="card" style=" border: rgb(167, 165, 165) 2px solid;">
+                <div class="card-header" style=" border-bottom: rgb(167, 165, 165) 2px solid;">
+                  Listado de sitios
+                </div>
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-md-12">
+                      <div class="table-responsive py-12">
+                        <table id="tabla-sitio" class="table table-striped table-bordered" style="width:100%">
+                          <thead>
+                            <tr>
+                              <th>Empresa</th>
+                              <th>Website</th>
+                              <th>Plantilla</th>
+                              <th>Editar</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {%for clientes in cliente %}
+                            {% if clientes.website.name %}
+                            <tr>
+                              <td>{{clientes.business_name}}</td>
+                              <td>{{clientes.website.name}}</td>
+                              <td>{{clientes.website.plantilla}}</td>
+                              <td> <a class="btn btn-info btn-sm" onclick="editarwebsite('{{clientes.id}}')">
+                                  <i class="fas fa-pencil-alt">
+                                  </i>
+                                  Edit
+                                </a></td>
+                            </tr>
+                            {% endif %}
+                            {% endfor %}
+                          </tbody>
+
+                        </table>
+                      </div>
+                      <div class="card-body">
+                        <div class="modal fade " id="websiteModal" tabindex="-1" role="dialog"
+                          aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+            <div class="tab-pane fade" id="Modulos" role="tabpanel" aria-labelledby="Modulos-tab">
+              <div>
+                <button id="agregarModulos" class="btn btn-info editar">Agregar</button>
+              </div>
+              <br>
+              <div class="col-md-12">
+                <div class="table-responsive py-2">
+                  <table id="tabla-modulos" class="table table-striped table-bordered" style="width:100%">
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>cuit_cuil</th>
+                        <th>business_name</th>
+                        <th>Modulos Asignados</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {%for clientes in cliente %}
+                      <tr>
+                        <td>{{clientes.id}}</td>
+                        <td>{{clientes.cuit_cuil}}</td>
+                        <td>{{clientes.business_name}}</td>
+                        <td>
+                          <table class="table table-striped table-bordered" style="width:100%">
+                            {%for c in customerModules %}
+
+                            {% if c.customer_id_id == clientes.id %}
+
+                            <tr class="table-light">
+                              <td style="width:50%">{{c.module_segmentacion_id}}</td>
+                              <td><button class="btn btn-danger btn-sm"
+                                  onclick="quitarPlan('{{c.id}}','{{clientes.business_name}}')">
+                                  <i class="fas fa-trash">
+                                  </i>
+                                  Retirar Plan
+                                </button></td>
+                            </tr>
+
+                            {% else %}
+                            {% endif %}
+                            {% endfor %}
+                          </table>
+                        </td>
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+
+                  </table>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="modal fade " id="agregarModulosModal" tabindex="-1" role="dialog"
+                  aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+
+
+                </div>
+              </div>
+            </div>
+
+
+          </div>
+
+
+        </div>
+      </div><!-- /.container-fluid -->
+  </section>
+  <!-- /.content -->
+</div>
+
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+
+<!-- jQuery -->
+<script src="{{ ASSETS_ROOT }}/plugins/jquery/jquery.min.js"></script>
+<!-- Bootstrap 4 -->
+<script src="{{ ASSETS_ROOT }}/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- ChartJS -->
+<script src="{{ ASSETS_ROOT }}/plugins/chart.js/Chart.min.js"></script>
+<!-- AdminLTE App -->
+<script src="{{ ASSETS_ROOT }}/js/adminlte.min.js"></script>
+<!-- AdminLTE for demo purposes -->
+<script src="{{ ASSETS_ROOT }}/js/demo.js"></script>
+<!-- page script -->
+<!-- DataTables -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/dataTables.bootstrap4.min.css">
+<script src="{{ ASSETS_ROOT }}/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="{{ ASSETS_ROOT }}/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="{{ ASSETS_ROOT }}/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+<script src="{{ ASSETS_ROOT }}/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+<script>
+
+
+  function editarCliente(x) {
+    $("#registrarCliente").load('/editarCliente/' + x, function () {
+      $('#registrarCliente').find('#persons_id').val('{{id}}');
+      $('#registrarCliente').modal('toggle');
+    })
+    console.log(x);
+  }
+
+  function editarUsuario(x) {
+    $("#agregarUsuarioModal").load('/editarUsuarioCliente/' + x, function () {
+      $('#agregarUsuarioModal').modal('toggle');
+    })
+    console.log(x);
+  }
+
+  function editarwebsite(x) {
+    $("#websiteModal").load("/editarWebsite/" + x, function () {
+
+
+      let data = '{{clienteJson}}'
+      var options = JSON.parse(data.replace(/&quot;/g, '"'));
+      console.log(options)
+      $('#websiteModal').find('#customer_id').append('<option selected>opciones</option>');
+
+      for (var i in options) {
+        console.log(options[i]['pk']);
+        var value = options[i]['pk']
+        var name = options[i]['fields']['business_name']
+        $('#websiteModal').find('#customer_id').append('<option value=' + value + '>' + name + '</option>');
+      }
+
+      $('#websiteModal').modal('toggle');
+    })
+    console.log(x);
+  }
+
+
+  
+  function quitarPlan(id, name) {
+    console.log(id + name);
+    Swal.fire({
+      icon: 'warning',
+      text: 'Desea retirar el Plan  al cliente ' + name + '?',
+      confirmButtonColor: '#3085d6',
+      showCancelButton: true,
+      confirmButtonText: 'Continuar',
+
+    }).then((result) => {
+
+      if (result.isConfirmed) {
+        console.log($("[name='csrfmiddlewaretoken']").val())
+        href = '/retirar/plan/' + id
+        data = { id: id }
+        /* window.location.href =  href */
+        $.ajax({
+
+          url: href,
+          data: { csrfmiddlewaretoken: $("[name='csrfmiddlewaretoken']").val() },
+          type: "post",
+          success: function (response) {
+            window.location.href = window.location.href;
+            console.log(response)
+          },
+          error: function (error) {
+            console.log(error)
+
+
+          }
+
+        })
+      }
+    })
+  }
+  $(function () {
+
+    var table = $('#tabla-personas').DataTable({
+      "paging": true,
+      "lengthChange": false,
+      "searching": false,
+      "ordering": true,
+      "info": true,
+      "autoWidth": false,
+      "responsive": true,
+      "oLanguage": {
+        "sEmptyTable": "No hay Clientes Registrados", //when empty
+        "sSearch": "&nbsp;<span> Buscar:</span> _INPUT_", //search
+        "sLengthMenu": "&nbsp;<span> Mostrar:</span> _MENU_", //label
+        "oPaginate": {
+          "sFirst": "Primera",
+          "sLast": "Ultima",
+          "sNext": ">",
+          "sPrevious": "<"
+        }, //pagination
+        "sInfo": "&nbsp;Mostrando _START_ al _END_ de _TOTAL_ ",
+        "sInfoEmpty": "",
+        "sLoadingRecords": "Cargando cotizaciones...",
+      },
+    });
+
+
+
+    $("#agregarCliente").click(function () {
+
+      $("#registrarCliente").load("/registrarCliente/", function () {
+        $('#registrarCliente').find('input[type="text"]').val('');
+        $('#registrarCliente').find('#persons_id').val('{{id}}');
+        $('#registrarCliente').modal('toggle');
+      })
+
+    });
+
+    $("#agregarBaseModal").click(function () {
+
+      $("#baseModal").load("/registrarBD/", function () {
+        $('#baseModal').find('input[type="text"]').val('');
+
+        let data = '{{clienteJson}}'
+        var options = JSON.parse(data.replace(/&quot;/g, '"'));
+        console.log(options)
+        $('#baseModal').find('#customer_id').append('<option selected>opciones</option>');
+
+        for (var i in options) {
+          console.log(options[i]['pk']);
+          var value = options[i]['pk']
+          var name = options[i]['fields']['business_name']
+          $('#baseModal').find('#customer_id').append('<option value=' + value + '>' + name + '</option>');
+        }
+        $('#baseModal').modal('toggle');
+      })
+
+    });
+    $("#agregarWebsite").click(function () {
+
+      $("#websiteModal").load("/registrarWebsite/", function () {
+        $('#websiteModal').find('input[type="text"]').val('');
+
+        let data = '{{clienteJson}}'
+        var options = JSON.parse(data.replace(/&quot;/g, '"'));
+        console.log(options)
+        $('#websiteModal').find('#customer_id').append('<option selected>opciones</option>');
+
+        for (var i in options) {
+          console.log(options[i]['pk']);
+          var value = options[i]['pk']
+          var name = options[i]['fields']['business_name']
+          $('#websiteModal').find('#customer_id').append('<option value=' + value + '>' + name + '</option>');
+        }
+        $('#websiteModal').modal('toggle');
+      })
+
+    });
+
+
+
+    $("#agregarUsuario").click(function () {
+      $("#agregarUsuarioModal").load("/registrarUsuarioCliente/", function () {
+        $('#agregarUsuarioModal').find('input[type="text"]').val('');
+
+        let data = '{{clienteJson}}'
+        var options = JSON.parse(data.replace(/&quot;/g, '"'));
+        console.log(options)
+        $('#agregarUsuarioModal').find('#customerID').append('<option value="0"selected>opciones</option>');
+
+        for (var i in options) {
+          console.log(options[i]['pk']);
+          var value = options[i]['pk']
+          var name = options[i]['fields']['business_name']
+          $('#agregarUsuarioModal').find('#customerID').append('<option value=' + value + '>' + name + '</option>');
+        }
+
+        $('#agregarUsuarioModal').modal('toggle');
+      })
+    });
+
+    $("#agregarBaseMod").click(function () {
+      $('#formPersona').attr('action', '/registrarPersona/');
+      $('#errores').html("");
+      $('#tabla-baseModal').find('input[type="text"]').val('');
+
+
+      $('#tabla-baseModal').modal('toggle');
+    });
+
+
+    $("#agregarModulos").click(function () {
+      $("#agregarModulosModal").load("/asignarModulos/", function () {
+        $('#agregarModulosModal').find('input[type="text"]').val('');
+        let data = '{{clienteJson}}'
+        var options = JSON.parse(data.replace(/&quot;/g, '"'));
+        console.log(options)
+        $('#agregarModulosModal').find('#customer_id').append('<option selected>opciones</option>');
+
+        for (var i in options) {
+          console.log(options[i]['pk']);
+          var value = options[i]['pk']
+          var name = options[i]['fields']['business_name']
+          $('#agregarModulosModal').find('#customer_id').append('<option value=' + value + '>' + name + '</option>');
+        }
+
+        $('#agregarModulosModal').modal('toggle');
+      })
+    });
+
+
+    /*    $('#tabla-personas tbody').on('click', 'tr', function () {
+         var data = table.row(this).data();
+   
+   
+         console.log((data));
+         $('#formPersona').attr('action', '/editarPersona/');
+         $('#editarPersonaModal').find('.modal-body #dni').val(data[1]);
+         $('#editarPersonaModal').find('.modal-body #name').val(data[2]);
+         $('#editarPersonaModal').find('.modal-body #last_name').val(data[3]);
+         $('#editarPersonaModal').find('.modal-body #birthday').val(data[4]);
+         $('#editarPersonaModal').find('.modal-body #phone').val(data[5]);
+         $('#editarPersonaModal').find('.modal-body #mobile').val(data[6]);
+         $('#editarPersonaModal').find('.modal-body #email').val(data[7]);
+         $('#editarPersonaModal').find('.modal-body #city').val(data[10]);
+         $('#editarPersonaModal').find('.modal-body #address').val(data[8]);
+         $('#editarPersonaModal').find('.modal-body #address_number').val(data[9]);
+         $('#editarPersonaModal').find('.modal-body #persona_id').val(data[0]);
+         $('#editarPersonaModal').modal('toggle');
+       }); */
+
+    $('#tabla-usuario').DataTable({
+      "paging": true,
+      "lengthChange": false,
+      "searching": false,
+      "ordering": true,
+      "info": true,
+      "autoWidth": false,
+      "responsive": true,
+      "oLanguage": {
+        "sEmptyTable": "No hay usuario registrado", //when empty
+        "sSearch": "&nbsp;<span> Buscar:</span> _INPUT_", //search
+        "sLengthMenu": "&nbsp;<span> Mostrar:</span> _MENU_", //label
+        "oPaginate": {
+          "sFirst": "Primera",
+          "sLast": "Ultima",
+          "sNext": ">",
+          "sPrevious": "<"
+        }, //pagination
+        "sInfo": "&nbsp;Mostrando _START_ al _END_ de _TOTAL_ ",
+        "sInfoEmpty": "",
+        "sLoadingRecords": "Cargando...",
+      },
+    });
+    $('#tabla-base').DataTable({
+      "paging": true,
+      "lengthChange": false,
+      "searching": false,
+      "ordering": true,
+      "info": true,
+      "autoWidth": false,
+      "responsive": true,
+      "oLanguage": {
+        "sEmptyTable": "No hay BD registrado", //when empty
+        "sSearch": "&nbsp;<span> Buscar:</span> _INPUT_", //search
+        "sLengthMenu": "&nbsp;<span> Mostrar:</span> _MENU_", //label
+        "oPaginate": {
+          "sFirst": "Primera",
+          "sLast": "Ultima",
+          "sNext": ">",
+          "sPrevious": "<"
+        }, //pagination
+        "sInfo": "&nbsp;Mostrando _START_ al _END_ de _TOTAL_ ",
+        "sInfoEmpty": "",
+        "sLoadingRecords": "Cargando...",
+      },
+    });
+
+
+
+
+    $('#tabla-sitio').DataTable({
+      "paging": true,
+      "lengthChange": false,
+      "searching": false,
+      "ordering": true,
+      "info": true,
+      "autoWidth": false,
+      "responsive": true,
+      "oLanguage": {
+        "sEmptyTable": "No hay sitio registrado", //when empty
+        "sSearch": "&nbsp;<span> Buscar:</span> _INPUT_", //search
+        "sLengthMenu": "&nbsp;<span> Mostrar:</span> _MENU_", //label
+        "oPaginate": {
+          "sFirst": "Primera",
+          "sLast": "Ultima",
+          "sNext": ">",
+          "sPrevious": "<"
+        }, //pagination
+        "sInfo": "&nbsp;Mostrando _START_ al _END_ de _TOTAL_ ",
+        "sInfoEmpty": "",
+        "sLoadingRecords": "Cargando...",
+      },
+    });
+
+    $('#tabla-modulos').DataTable({
+      "paging": true,
+      "lengthChange": false,
+      "searching": false,
+      "ordering": true,
+      "info": true,
+      "autoWidth": false,
+      "responsive": true,
+      "oLanguage": {
+        "sEmptyTable": "No hay BD registrado", //when empty
+        "sSearch": "&nbsp;<span> Buscar:</span> _INPUT_", //search
+        "sLengthMenu": "&nbsp;<span> Mostrar:</span> _MENU_", //label
+        "oPaginate": {
+          "sFirst": "Primera",
+          "sLast": "Ultima",
+          "sNext": ">",
+          "sPrevious": "<"
+        }, //pagination
+        "sInfo": "&nbsp;Mostrando _START_ al _END_ de _TOTAL_ ",
+        "sInfoEmpty": "",
+        "sLoadingRecords": "Cargando...",
+      },
+    });
+  });
+
+
+
+  const listarCiudades = async (idPais) => {
+    try {
+      const response = await fetch(`/ciudad/${idPais}`);
+      const data = await response.json();
+
+      if (data.message === "Success") {
+        ciudades = data.ciudad;
+
+        provincia.value = ciudades;
+      } else {
+        alert("Países no encontrados...");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const listarPaises = async () => {
+    var ciudad = id_city_id.value
+    try {
+      const response = await fetch(`/ciudad/${ciudad}`);
+      const data = await response.json();
+
+      if (data.message === "Success") {
+        ciudades = data.ciudad;
+
+        provincia.value = ciudades;
+      } else {
+        alert("provincia no encontrados...");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const cargaInicial = async () => {
+    await listarPaises();
+
+    id_city_id.addEventListener("change", (event) => {
+      listarCiudades(event.target.value);
+    });
+
+
+  };
+
+  window.addEventListener("load", async () => {
+    await cargaInicial();
+
+  });
+</script>
+
+{% endblock javascripts %}

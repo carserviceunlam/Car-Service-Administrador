@@ -1,0 +1,148 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} ChartsJS {% endblock %}
+
+<!-- Element injected in the BODY element -->
+{% block body_class %} sidebar-mini {% endblock body_class %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+
+<!-- Google Font: Source Sans Pro -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+<!-- Font Awesome -->
+<link rel="stylesheet" href="{{ ASSETS_ROOT }}/plugins/fontawesome-free/css/all.min.css">
+<!-- Theme style -->
+<link rel="stylesheet" href="{{ ASSETS_ROOT }}/css/adminlte.min.css">
+<script src="{{ ASSETS_ROOT }}/plugins/sweetalert2/sweetalert2.all.min.js"></script>
+{% endblock stylesheets %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>Formulario de Nuevos Usuarios del Sistema</h1>
+        </div>
+      </div>
+    </div><!-- /.container-fluid -->
+  </section>
+
+  <!-- Main content -->
+  {% if messages %}
+  {% for message in messages %}
+  <script>
+    const Toast = Swal.mixin({
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 5000,
+      timerProgressBar: true,
+      didOpen: (toast) => {
+        toast.addEventListener('mouseenter', Swal.stopTimer)
+        toast.addEventListener('mouseleave', Swal.resumeTimer)
+      }
+    })
+
+    Toast.fire({
+      icon: 'success',
+      title: 'registrado con exito!'
+    })
+  </script>
+  {% endfor %}
+  {% endif %}
+
+  <section class="content">
+    <div class="container-fluid">
+
+      <div class="card card-primary card-outline">
+        <div class="card-header">
+          <h3 class="card-title">Nuevo Usuario</h3>
+        </div> <!-- /.card-body -->
+        <div class="card-body">
+          <form action="/register/usuario/" method="post">{% csrf_token %}
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                {{form.first_name|as_crispy_field}}
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                {{form.last_name|as_crispy_field}}
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                {{form.username|as_crispy_field}}
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                {{form.email|as_crispy_field}}
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                {{form.password1|as_crispy_field}}
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                {{form.password2|as_crispy_field}}
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                {{form.is_active|as_crispy_field}}
+              </div>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="grupo" id="role1" value="administrador" checked >
+              <label class="form-check-label" for="exampleRadios1">
+                Administrador
+              </label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="grupo" id="role2" value="vendedor" >
+              <label class="form-check-label" for="exampleRadios2">
+                Vendedor
+              </label>
+            </div>
+            <br>
+            <button type="submit" class="btn btn-primary">Guardar</button>
+          </form>
+        </div><!-- /.card-body -->
+      </div>
+    </div><!-- /.container-fluid -->
+  </section>
+  <!-- /.content -->
+</div>
+
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+
+<!-- jQuery -->
+<script src="{{ ASSETS_ROOT }}/plugins/jquery/jquery.min.js"></script>
+<!-- Bootstrap 4 -->
+<script src="{{ ASSETS_ROOT }}/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- ChartJS -->
+<script src="{{ ASSETS_ROOT }}/plugins/chart.js/Chart.min.js"></script>
+<!-- AdminLTE App -->
+<script src="{{ ASSETS_ROOT }}/js/adminlte.min.js"></script>
+<!-- AdminLTE for demo purposes -->
+<script src="{{ ASSETS_ROOT }}/js/demo.js"></script>
+<!-- page script -->
+<script>
+
+</script>
+
+{% endblock javascripts %}

@@ -1,0 +1,153 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} ChartsJS {% endblock %}
+
+<!-- Element injected in the BODY element -->
+{% block body_class %} sidebar-mini {% endblock body_class %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+
+<!-- Google Font: Source Sans Pro -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+<!-- Font Awesome -->
+<link rel="stylesheet" href="{{ ASSETS_ROOT }}/plugins/fontawesome-free/css/all.min.css">
+<!-- Theme style -->
+<link rel="stylesheet" href="{{ ASSETS_ROOT }}/css/adminlte.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.11.2/css/bootstrap-select.min.css'>
+<script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.6.3/js/bootstrap-select.min.js"></script>
+
+{% endblock stylesheets %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>Formulario de altas de Nuevos Clientes</h1>
+        </div>
+      </div>
+    </div><!-- /.container-fluid -->
+  </section>
+
+  <!-- Main content -->
+
+
+  <section class="content animate__animated animate__slideInDown">
+    <div class="container-fluid">
+      
+      <div class="card card-primary card-info">
+        <div class="card-header">
+          <h3 class="card-title">Nuevo Cliente</h3>
+        </div> <!-- /.card-body -->
+        <div class="card-body">
+
+          <form method="post">{% csrf_token %}
+            <div class="form-row">
+              <input type="hidden" name="created_date" value="{% now ' Y-m-d' %}">
+              <div class="form-group col-md-4">
+                {{form.dni|as_crispy_field}}
+              </div>
+              <div class="form-group col-md-4">
+                {{form.name|as_crispy_field}}
+              </div>
+              <div class="form-group col-md-4">
+                {{form.last_name|as_crispy_field}}
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group col-md-3">
+                {{form.birthday|as_crispy_field}}
+              </div>
+              <div class="form-group col-md-3">
+                {{form.phone|as_crispy_field}}
+              </div>
+              <div class="form-group col-md-3">
+                {{form.mobile|as_crispy_field}}
+              </div>
+              <div class="form-group col-md-3">
+                {{form.email|as_crispy_field}}
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group col-md-3">
+                {{form.address|as_crispy_field}}
+              </div>
+              <div class="form-group col-md-3">
+                {{form.address_number|as_crispy_field}}
+              </div>
+              <div class="form-group col-md-3">
+                {{form.city_id|as_crispy_field}}
+              </div>
+              <div class="form-group col-md-3">
+                <label for="inputEmail4">Provincia</label>
+                <input type="text" class="form-control" name="provincia" id="provincia" readonly>
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Guardar</button>
+          </form>
+        </div><!-- /.card-body -->
+      </div>
+    </div><!-- /.container-fluid -->
+  </section>
+  <!-- /.content -->
+</div>
+
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+
+<!-- jQuery -->
+<script src="{{ ASSETS_ROOT }}/plugins/jquery/jquery.min.js"></script>
+<!-- Bootstrap 4 -->
+<script src="{{ ASSETS_ROOT }}/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- ChartJS -->
+<script src="{{ ASSETS_ROOT }}/plugins/chart.js/Chart.min.js"></script>
+<!-- AdminLTE App -->
+<script src="{{ ASSETS_ROOT }}/js/adminlte.min.js"></script>
+<!-- AdminLTE for demo purposes -->
+<script src="{{ ASSETS_ROOT }}/js/demo.js"></script>
+<!-- page script -->
+<script>
+
+  const provincia_get = async (id) => {
+    try {
+      const response = await fetch(`/ciudad/${id}`);
+      const data = await response.json();
+
+      if (data.message === "Success") {
+        ciudades = data.ciudad;
+        console.log(ciudades)
+        provincia.value = ciudades;
+      } else {
+        alert("ciudad no encontrado");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const cargaInicial = async () => {
+    id_city_id.addEventListener("change", (event) => {
+      provincia_get(event.target.value);
+    });
+  };
+
+  window.addEventListener("load", async () => {
+    await cargaInicial();
+  });
+</script>
+
+{% endblock javascripts %}

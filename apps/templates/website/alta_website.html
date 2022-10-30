@@ -1,0 +1,97 @@
+{% load crispy_forms_tags %}
+<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title" style="color:#2c3e4f" id="exampleModalLongTitle">Nueva Website
+      </h5>
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body py-80">
+      <div class="form-group col-md-8" id="errores_website">
+      </div>
+      <form id="formWebsite" action="/registrarWebsite/" method="post">{% csrf_token %}
+        <div class="form-row">
+          <div class="form-group col-md-3">
+            {{form.name|as_crispy_field}}
+          </div>
+          <div class="form-group col-md-3">
+            {{form.dns1|as_crispy_field}}
+          </div>
+          <div class="form-group col-md-3">
+            {{form.dns2|as_crispy_field}}
+          </div>
+          <div class="form-group col-md-3">
+            <label for="inputEmail4">Cliente</label>
+            <select name="customer_id" id="customer_id" class="form-control">
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-2">
+            <label >Plantilla</label>
+            <select name="plantilla" id="plantilla" class="form-control" required>
+              <option value="">Opciones</option>
+              <option value="plantilla1">plantilla 1</option>
+              <option value="plantilla1">plantilla 2</option>
+            </select>
+          </div>
+          <div class="form-group col-md-5">
+            {{form.parrafo_1|as_crispy_field}}
+          </div>
+          <div class="form-group col-md-5">
+            {{form.parrafo_2|as_crispy_field}}
+          </div>
+          <div class="form-group col-md-12">
+            {{form.parrafo_3|as_crispy_field}}
+          </div>        
+        </div>
+        <button type="submit" class="btn btn-primary">Guardar</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% block javascripts %}
+
+
+<script src="{{ ASSETS_ROOT }}/js/main.js"></script>
+<script>
+
+  $(function () {
+
+    $("#formWebsite").submit(function (event) {
+      event.preventDefault();
+      $.ajax({
+        data: $("#formWebsite").serialize(),
+        url: $("#formWebsite").attr('action'),
+        type: $("#formWebsite").attr('method'),
+        success: function (response) {
+          $('#baseModal').modal('hide');
+          location.reload();
+          console.log(response)
+        },
+        error: function (error) {
+          console.log(error)
+          errorModalWebsite(error)
+        }
+
+      })
+    });
+
+    function errorModalWebsite(errores) {
+      console.log("errorModal");
+      $('#errores_website').html("");
+      let error = "";
+
+      for (let item in errores.responseJSON.error) {
+        error += '<div class="alert alert-danger" <strong>' + errores.responseJSON.error[item] + '</strong></div>'
+      }
+      $('#errores_website').append(error);
+    }
+
+  });
+</script>
+
+{% endblock javascripts %}

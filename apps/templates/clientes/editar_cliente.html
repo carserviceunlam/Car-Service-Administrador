@@ -1,0 +1,108 @@
+{% load crispy_forms_tags %}
+<div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title" style="color:#2c3e4f" id="exampleModalLongTitle">Editar Empresa</h5>
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+
+
+    <div id="errores_id">
+
+    </div>
+    <div class="modal-body py-80">
+      <!--/home/registrarCliente/-->
+      <form id="editarCliente" action="{% url 'editar_cliente' object.pk %}" method="post">{% csrf_token %}
+        <input type="hidden" name="persons_id" id="persons_id">
+        <div class="form-row">
+          <div class="form-group col-md-6">       
+            {{form.business_name|as_crispy_field}}
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-3">
+            {{form.cuit_cuil|as_crispy_field}}
+          </div>
+          <div class="form-group col-md-3">
+            {{form.email|as_crispy_field}}
+          </div>
+          <div class="form-group col-md-3">
+            {{form.phone|as_crispy_field}}
+          </div>
+          <div class="form-group col-md-3">
+            {{form.mobile|as_crispy_field}}
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-3">
+            {{form.address|as_crispy_field}}
+          </div>
+          <div class="form-group col-md-3">
+            {{form.height|as_crispy_field}}
+          </div>
+          <div class="form-group col-md-3">
+            {{form.city_id|as_crispy_field}}
+          </div>
+          <div class="form-group col-md-3">
+            <label for="inputEmail4">Provincia</label>
+            <input type="text" class="form-control" id="provincia_cliente" name="provincia_cliente" value="{{cliente.city_id.province_id}}">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-5">
+            {{form.bank_account_id|as_crispy_field}}
+          </div>
+          <div class="form-group col-md-5">
+            {{form.details|as_crispy_field}}
+          </div>
+          <div class="form-group col-md-2" style="background-color:rgb(242, 248, 243);">
+            <label for="inputCity">Estado</label>
+            {{form.state|as_crispy_field}}
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Guardar</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% block javascripts %}
+
+
+<script src="{{ ASSETS_ROOT }}/js/main.js"></script>
+<script>
+ const listar = async (idPais) => {
+    try {
+      const response = await fetch(`/ciudad/${idPais}`);
+      const data = await response.json();
+
+      if (data.message === "Success") {
+        ciudades = data.ciudad;
+        console.log(ciudades)
+        provincia_cliente.value = ciudades;
+      } else {
+        alert("Países no encontrados...");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const carga = async () => {
+
+
+    id_city_id.addEventListener("change", (event) => {
+      listar(event.target.value);
+    });
+
+
+  };
+
+  window.addEventListener("load", async () => {
+    await carga();
+  });
+</script>
+
+
+{% endblock javascripts %}

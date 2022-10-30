@@ -1,0 +1,183 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} ChartsJS {% endblock %}
+
+<!-- Element injected in the BODY element -->
+{% block body_class %} sidebar-mini {% endblock body_class %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+
+<!-- Google Font: Source Sans Pro -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+<!-- Font Awesome -->
+<link rel="stylesheet" href="{{ ASSETS_ROOT }}/plugins/fontawesome-free/css/all.min.css">
+<!-- Theme style -->
+<link rel="stylesheet" href="{{ ASSETS_ROOT }}/css/adminlte.min.css">
+<script src="{{ ASSETS_ROOT }}/plugins/sweetalert2/sweetalert2.all.min.js"></script>
+
+{% endblock stylesheets %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>Formulario de Edicion Cliente</h1>
+        </div>
+      </div>
+    </div><!-- /.container-fluid -->
+  </section>
+
+  <!-- Main content -->
+  <section class="content">
+    <div class="container-fluid">
+      <div class="card card-primary card-outline">
+        <div class="mx-3 sm:py-10 lg:py-25">
+
+          <br>
+          {% if messages %}
+          {% for message in messages %}
+          <script>
+            const Toast = Swal.mixin({
+              toast: true,
+              position: 'top-end',
+              showConfirmButton: false,
+              timer: 5000,
+              timerProgressBar: true,
+              didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+              }
+            })
+
+            Toast.fire({
+              icon: 'success',
+              title: 'registrado con exito!'
+            })
+          </script>
+          {% endfor %}
+          {% endif %}
+          <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="tab">
+              <button class="nav-link active" id="empresa-tab" data-toggle="tab" data-target="#Persona" type="button"
+                role="tab" aria-controls="home" aria-selected="true">Modulo</button>
+            </li>
+          </ul>
+          <br>
+          <div class="tab-content" id="myTabContent">
+
+            <div class="tab-pane fade show active" id="Persona" role="tabpanel" aria-labelledby="empresa-tab">
+              <form method="post">{% csrf_token %}
+                <div class="form-row">
+                  <div class="form-group col-md-6"> 
+                    {{form.title|as_crispy_field}}
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group col-md-6"> 
+                    {{form.codigo|as_crispy_field}}
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group col-md-6">
+                    {{form.state|as_crispy_field}}
+                  </div>
+                </div>
+
+                <br>
+                <button type="submit" class="btn btn-primary">Guardar</button>
+              </form>
+              <br>
+            </div>
+          </div>
+        </div>
+      </div><!-- /.container-fluid -->
+  </section>
+  <!-- /.content -->
+</div>
+
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+
+<!-- jQuery -->
+<script src="{{ ASSETS_ROOT }}/plugins/jquery/jquery.min.js"></script>
+<!-- Bootstrap 4 -->
+<script src="{{ ASSETS_ROOT }}/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- ChartJS -->
+<script src="{{ ASSETS_ROOT }}/plugins/chart.js/Chart.min.js"></script>
+<!-- AdminLTE App -->
+<script src="{{ ASSETS_ROOT }}/js/adminlte.min.js"></script>
+<!-- AdminLTE for demo purposes -->
+<script src="{{ ASSETS_ROOT }}/js/demo.js"></script>
+<!-- page script -->
+<!-- DataTables -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/dataTables.bootstrap4.min.css">
+<script src="{{ ASSETS_ROOT }}/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="{{ ASSETS_ROOT }}/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="{{ ASSETS_ROOT }}/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+<script src="{{ ASSETS_ROOT }}/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+<script>
+
+  function agregar() {
+    if ('{{segmentacion.type}}') {
+      $("#agregarBoton").hide();
+    }
+  }
+  agregar();
+  $(function () {
+
+    $("#agregarSegmentacion").click(function () {
+      $("#nuevaSegmentacion").load("/registrarSegmentacion/", function () {
+        $('#nuevaSegmentacion').find('input[type="text"]').val('');
+        $('#nuevaSegmentacion').find('#module_id').val('{{id}}');
+        $('#nuevaSegmentacion').modal('toggle');
+      })
+
+    });
+    $("#registroSegmentacion").submit(function (event) {
+
+      event.preventDefault();
+      $.ajax({
+        data: $("#registroSegmentacion").serialize(),
+        url: $("#registroSegmentacion").attr('action'),
+        type: $("#registroSegmentacion").attr('method'),
+        success: function (response) {
+          location.reload();
+          console.log(response)
+        },
+        error: function (error) {
+          console.log(error)
+          errorModal(error)
+
+        }
+
+      })
+    });
+
+
+    function errorModal(errores) {
+      console.log("errorModal");
+      $('#errores').html("");
+      let error = "";
+      for (let item in errores.responseJSON.error) {
+        error += '<div class="alert alert-danger" <strong>' + errores.responseJSON.error[item] + '</strong></div>'
+      }
+      $('#errores').append(error);
+    }
+  });
+
+
+
+</script>
+
+{% endblock javascripts %}
