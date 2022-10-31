@@ -39,7 +39,7 @@ MESSAGE_TAGS={
 ASSETS_ROOT = os.getenv('ASSETS_ROOT', '/static/assets')
 
 # load production server from .env
-ALLOWED_HOSTS = ['localhost', 'localhost:85', '127.0.0.1','39f6-186-18-151-26.sa.ngrok.io',
+ALLOWED_HOSTS = ['localhost', 'localhost:85', '127.0.0.1','f8e0-186-18-151-26.sa.ngrok.io',
                  env('SERVER', default='127.0.0.1')]
 CSRF_TRUSTED_ORIGINS = ['http://localhost:85', 'http://127.0.0.1',
                         'https://' + env('SERVER', default='127.0.0.1')]
