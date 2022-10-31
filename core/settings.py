@@ -24,22 +24,22 @@ SECRET_KEY = env('SECRET_KEY', default='S#perS3crEt_007')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env('DEBUG')
-CRISPY_TEMPLATE_PACK='BOOTSTRAP4'
+CRISPY_TEMPLATE_PACK = 'BOOTSTRAP4'
 
-MESSAGE_TAGS={
+MESSAGE_TAGS = {
 
- mensajes_de_error.DEBUG:'debug',
- mensajes_de_error.INFO:'info',
- mensajes_de_error.SUCCESS:'success',
- mensajes_de_error.WARNING:'warning',
- mensajes_de_error.ERROR:'danger',
+    mensajes_de_error.DEBUG: 'debug',
+    mensajes_de_error.INFO: 'info',
+    mensajes_de_error.SUCCESS: 'success',
+    mensajes_de_error.WARNING: 'warning',
+    mensajes_de_error.ERROR: 'danger',
 
 }
 # Assets Management
 ASSETS_ROOT = os.getenv('ASSETS_ROOT', '/static/assets')
 
 # load production server from .env
-ALLOWED_HOSTS = ['localhost', 'localhost:85', '127.0.0.1','f8e0-186-18-151-26.sa.ngrok.io',
+ALLOWED_HOSTS = ['localhost', 'localhost:85', '127.0.0.1', 'f8e0-186-18-151-26.sa.ngrok.io',
                  env('SERVER', default='127.0.0.1')]
 CSRF_TRUSTED_ORIGINS = ['http://localhost:85', 'http://127.0.0.1',
                         'https://' + env('SERVER', default='127.0.0.1')]
@@ -166,10 +166,10 @@ STATICFILES_DIRS = (
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT= 587
-EMAIL_HOST_USER= 'carservice.consultas@gmail.com'
-EMAIL_HOST_PASSWORD='jixstbqwyfeantms'
-EMAIL_USE_TLS=True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'carservice.consultas@gmail.com'
+EMAIL_HOST_PASSWORD = 'jixstbqwyfeantms'
+EMAIL_USE_TLS = True
 
 
 #############################################################
