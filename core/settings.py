@@ -39,8 +39,7 @@ MESSAGE_TAGS = {
 ASSETS_ROOT = os.getenv('ASSETS_ROOT', '/static/assets')
 
 # load production server from .env
-ALLOWED_HOSTS = ['localhost', 'localhost:85', '127.0.0.1', 'f8e0-186-18-151-26.sa.ngrok.io',
-                 env('SERVER', default='127.0.0.1')]
+ALLOWED_HOSTS = ['0.0.0.0', '35.175.149.249']
 CSRF_TRUSTED_ORIGINS = ['http://localhost:85', 'http://127.0.0.1',
                         'https://' + env('SERVER', default='127.0.0.1')]
 
@@ -105,10 +104,10 @@ WSGI_APPLICATION = 'core.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
-        "NAME": "car_service",
-        "USER": "root",
-        "PASSWORD": "",
-        "HOST": "127.0.0.1",
+        "NAME": "carservicedb",
+        "USER": "admin",
+        "PASSWORD": "Service2022",
+        "HOST": "carservicedb.cvkrx6mlzyev.us-east-1.rds.amazonaws.com",
         "PORT": "3306",
     },
 }
