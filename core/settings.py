@@ -39,7 +39,7 @@ MESSAGE_TAGS = {
 ASSETS_ROOT = os.getenv('ASSETS_ROOT', '/static/assets')
 
 # load production server from .env
-ALLOWED_HOSTS = ['0.0.0.0', '35.175.149.249']
+ALLOWED_HOSTS = ['0.0.0.0', '35.175.149.249','127.0.0.1','eb26-186-18-151-26.sa.ngrok.io']
 CSRF_TRUSTED_ORIGINS = ['http://localhost:85', 'http://127.0.0.1',
                         'https://' + env('SERVER', default='127.0.0.1')]
 
@@ -101,7 +101,7 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-DATABASES = {
+""" DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
         "NAME": "carservicedb",
@@ -111,8 +111,17 @@ DATABASES = {
         "PORT": "3306",
     },
 }
-
-
+ """
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": "car_service",
+        "USER": "root",
+        "PASSWORD": "",
+        "HOST": "127.0.0.1",
+        "PORT": "3306",
+    },
+}
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
 

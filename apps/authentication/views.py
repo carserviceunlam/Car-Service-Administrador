@@ -32,7 +32,7 @@ def login_view(request):
             if user is not None:
                 if user.groups.filter(name='administrador').exists() | user.groups.filter(name='vendedor').exists()|user.is_superuser == 1:
                    login(request, user)
-                   return redirect("/")
+                   return redirect("/home/")
                 else:
                     msg = 'No tiene permisos para ingresar'
             else:

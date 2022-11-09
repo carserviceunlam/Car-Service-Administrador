@@ -8,11 +8,17 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
 from apps.servicios.models import Website
+from django.shortcuts import render
 from django.urls import reverse
 
 
-@login_required(login_url="/login/")
 def index(request):
+    
+  return render(request,"web/index.html")
+
+
+@login_required(login_url="/login/")
+def home(request):
     context = {'segment': 'index'}
 
     html_template = loader.get_template('home/index.html')

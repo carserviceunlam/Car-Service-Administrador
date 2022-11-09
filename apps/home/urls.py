@@ -9,7 +9,8 @@ from apps.clientes.views import registrarCliente
 urlpatterns = [
 
     # The home page
-    path('', views.index, name='home'),
+    path('', views.index, name='index'),
+    path('home/', views.home, name='home'),
     path('customer/<slug:slug>', views.custom, name='customers'),
     # Matches any html file
     re_path(r'^.*\.*', views.pages, name='pages'),
