@@ -101,7 +101,7 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-""" DATABASES = {
+DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
         "NAME": "carservicedb",
@@ -111,7 +111,9 @@ WSGI_APPLICATION = 'core.wsgi.application'
         "PORT": "3306",
     },
 }
- """
+
+
+""" 
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
@@ -122,6 +124,9 @@ DATABASES = {
         "PORT": "3306",
     },
 }
+
+}
+ """
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
 
